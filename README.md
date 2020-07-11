@@ -34,6 +34,8 @@ of the total force as a function of the ionic step. hlines for tolerances are fi
 ![pdf page for an atom](Screenshot_20200711_105957.png)
 
 
+Also, labels are in spanish. feel free to translate! 
+
 # Prerequisites:
 
 - gnuplot for plotting
