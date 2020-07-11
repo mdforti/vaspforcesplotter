@@ -1,0 +1,36 @@
+set terminal pdf enhanced color
+set output 'Energias.pdf'
+
+input='Energias.dat'
+oldE=NaN
+deltaE(E)=(DE=E-oldE,oldE=E,DE)
+
+
+set format y "%h"
+set grid y
+set lmargin 15
+unset key
+
+set multiplot
+
+set title system("basename $PWD") noenhance
+set format x ""
+set ylabel "E (eV)"
+set origin 0,0.6
+set size 1,0.4
+stats input nooutput
+plot input u 0:2 ps 0.5,\
+       'borders.dat' u  1:(STATS_min_y):(0):(STATS_max_y - STATS_min_y) w vectors nohead
+
+unset title 
+set origin 0,0
+set size 1,0.6
+#plot input u 0:2 w lp 
+set logscale y
+set format x "%h"
+set ylabel "{/Symbol D}E (eV)"
+set xlabel "Ciclo Ionico"
+plot input u 0:(abs(deltaE($2))) w lp ps 0.5, \
+       'borders.dat' u  1:(1e-5):(0):(1) w vectors nohead
+     
+

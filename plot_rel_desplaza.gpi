@@ -1,0 +1,69 @@
+set terminal pdf enhanced color
+set output 'Rel_Desplaza.pdf'
+
+#set format y "%h"
+set format x  "%.3f"
+set xlabel " Ciclo Ionico "
+set lmargin 10
+#set xtics 0.002
+
+
+old_x = NaN
+old_y = NaN
+old_z = NaN
+delta_x(x) =(Dx=x - old_x , old_x = x, 	Dx)
+delta_y(y) =(Dy=y - old_y , old_y = y, 	Dy)
+delta_z(z) =(Dz=z - old_z , old_z = z, 	Dz)
+
+NATOMS=system("echo $(grep NIONS OUTCAR | awk '{print $NF}')")
+do for [atom=1:NATOMS] {
+  atomnum=sprintf("%03d",atom)
+  atomvar=sprintf("%d",atom)
+  getdynamics="awk -v ver=".atomvar." '/Direct/ {for(i=1;i<=ver;i++)getline;print $(NF-2) $(NF-1) $NF}' CONTCAR"
+  dynamics=system(getdynamics)
+  input="force".atomnum
+  getX0="head -1 ".input." | awk -v CONVFMT=%.17g '{print $1}'"
+  getY0="head -1 ".input." | awk -v CONVFMT=%.17g '{print $2}'"
+  getZ0="head -1 ".input." | awk -v CONVFMT=%.17g '{print $3}'"
+  getXF="tail -1 ".input." | awk -v CONVFMT=%.17g '{print $1}'"
+  getYF="tail -1 ".input." | awk -v CONVFMT=%.17g '{print $2}'"
+  getZF="tail -1 ".input." | awk -v CONVFMT=%.17g '{print $3}'"
+  X0=system(getX0)
+  Y0=system(getY0)
+  Z0=system(getZ0)
+  XF=system(getXF)
+  YF=system(getYF)
+  ZF=system(getZF)
+  if (dynamics eq "TTT") {
+   stats input u 1:2 nooutput
+#   print STATS_max_x
+   thisinc=(STATS_max_x-STATS_min_x)/4
+   set xtics thisinc
+
+   set key
+   #set xrange [0:STATS_records]
+   set title "Trayectoria del atomo ".atomnum 
+   set title "Trayectorias para el atomo {/:Bold ".atomvar."}, dinamica ".dynamics
+#    set ylabel "(x,y) (".angstrom.")"
+   set ylabel ""
+   set xlabel ""
+#   print atomnum.":".X0.",".Y0.",".Z0."; Dinamica ".dynamics."i = ".sprintf("%d",atom)
+   
+   set multiplot
+   set origin 0,0
+   set size 0.5,1
+   unset arrow
+   set arrow from X0,Y0 to XF,YF lt 2
+   plot input u 1:2 w lp title '(x,y)'
+#        input u 1:2 w lp title 'Y',\
+#	input u 1:2 w lp title 'Z'
+   set origin 0.5,0
+   set size 0.5,1
+   set title "   "
+   unset arrow
+   set arrow from X0,Z0 to XF,ZF lt 2
+   plot input u 1:3 w lp title '(x,z)'
+
+   
+   }
+}

@@ -1,0 +1,62 @@
+set terminal postscript enhanced color
+set output 'Desplazamientos_signos.ps'
+
+set format y "%h"
+set xlabel " Ciclo Ionico "
+set lmargin 0
+
+old_x = NaN
+old_y = NaN
+old_z = NaN
+delta_x(x) =(Dx=x - old_x , old_x = x, 	Dx)
+delta_y(y) =(Dy=y - old_y , old_y = y, 	Dy)
+delta_z(z) =(Dz=z - old_z , old_z = z, 	Dz)
+
+NATOMS=system("echo $(grep NIONS OUTCAR | awk '{print $NF}')")
+do for [atom=1:NATOMS] {
+  atomnum=sprintf("%03d",atom)
+  atomvar=sprintf("%d",atom)
+  getdynamics="awk -v ver=".atomvar." '/Direct/ {for(i=1;i<=ver;i++)getline;print $(NF-2) $(NF-1) $NF}' CONTCAR"
+  dynamics=system(getdynamics)
+  if (dynamics eq "TTT") {
+   input="force".atomnum
+   stats input nooutput
+   set key
+   set xrange [0:STATS_records]
+#   set title "Desplazamientos sobre el atomo ".atomnum 
+   set multiplot
+
+   set origin 0.15,0.5
+   set size 0.8,0.45
+   set title "Desplazamientos para el atomo {/:Bold ".atomvar."}, dinamica ".dynamics
+   set xtics format ""
+   set ylabel "z (".angstrom.")"
+   plot input u 0:1 w lp title 'z'
+#        input u 0:2 w lp title 'Y',\
+#	input u 0:3 w lp title 'Z'
+   unset title
+
+   set origin 0.15,0
+   set size 0.8,0.5
+   set logscale y
+   set grid y
+   set ylabel "{/Symbol D} r (".angstrom.")"
+   set xtics format "%h"
+   plot input u 0:(delta_x($1)>=0?delta_x($1):1/0) w lp title 'Dx >= 0',\
+          '' u  0:(delta_x($1)<0?-delta_x($1):1/0)  w lp title 'Dx < 0',\
+          '' u  0:(delta_y($2)>=0?delta_y($2):1/0) w lp title 'Dy >= 0',\
+          '' u  0:(delta_y($2)<0?-delta_y($2):1/0) w lp title 'Dy <  0',\
+  	  '' u  0:(delta_z($3)>=0?delta_z($3):1/0) w lp title 'Dz >= 0',\
+          '' u  0:(delta_z($3)<0?-delta_z($3):1/0) w lp title 'Dy <  0',\
+       'borders.dat' u  1:(1e-5):(0):(1) w vectors nohead notitle
+
+
+   print "hecho ".atomnum
+   unset logscale y
+   unset xlabel
+   unset multiplot
+  
+   print "hecho ".atomnum
+
+}
+}
