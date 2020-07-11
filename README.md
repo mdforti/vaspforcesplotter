@@ -34,10 +34,21 @@ of the total force as a function of the ionic step. hlines for tolerances are fi
 ![pdf page for an atom](Screenshot_20200711_105957.png)
 
 
-Also, labels are in spanish. feel free to translate! 
+Labels are in spanish. feel free to translate! 
+
+# Customization
+
+there are several options into the _proceso.sh_ script. for example you can define the 
+__thiscase__ variable to put a title to your files, or you can set a __PARC__ variable 
+with the names of files were extra results can be considered. usually I use the __PARC__ 
+variable to consider partially (non converged) results. Lastly, you can find a line which
+enters the __atomos__ folder and removes all atoms teporary files but keeps some which might
+be of your interest
 
 # Prerequisites:
 
 - gnuplot for plotting
 - pdftk for table of contents
+- imagemagik  to select pdfpages and convert to png
 - bash
+
