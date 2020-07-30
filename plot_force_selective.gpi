@@ -20,15 +20,16 @@ set bmargin 5
 set key outside  bottom
 
 i=0
+digits=sprintf("%d", strlen(NION))
 do for [atom=1:NION] {
-atomnum=sprintf("%03d",atom)
+atomnum=sprintf("%0".digits."d",atom)
 atomvar=sprintf("%d",atom)
 
-atsym="Fe"
- if (atom <=56 ) {  atsym="Fe" }
- if ( (atom<=56+12) && (atom>56) ) { atsym = "Fe_{tet}" }
- if ( (atom<=56+12+20 ) && (atom > 56+12) ) {  atsym="Fe_{octa}" }
- if ( atom > 56+12+20 ) { atsym = "O" }
+atsym="Atomo"
+# if (atom <=56 ) {  atsym="Fe" }
+# if ( (atom<=56+12) && (atom>56) ) { atsym = "Fe_{tet}" }
+# if ( (atom<=56+12+20 ) && (atom > 56+12) ) {  atsym="Fe_{octa}" }
+# if ( atom > 56+12+20 ) { atsym = "O" }
  print atomnum
  input='force'.atomnum
  getdynamics="awk -v ver=".atomvar." '/Direct/ {for(i=1;i<=ver;i++)getline;print $(NF-2) $(NF-1) $NF}' CONTCAR"

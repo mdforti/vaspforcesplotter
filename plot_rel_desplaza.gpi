@@ -16,8 +16,10 @@ delta_y(y) =(Dy=y - old_y , old_y = y, 	Dy)
 delta_z(z) =(Dz=z - old_z , old_z = z, 	Dz)
 
 NATOMS=system("echo $(grep NIONS OUTCAR | awk '{print $NF}')")
+digits=sprintf("%d", strlen(NATOMS))
+
 do for [atom=1:NATOMS] {
-  atomnum=sprintf("%03d",atom)
+  atomnum=sprintf("%0".digits."d",atom)
   atomvar=sprintf("%d",atom)
   getdynamics="awk -v ver=".atomvar." '/Direct/ {for(i=1;i<=ver;i++)getline;print $(NF-2) $(NF-1) $NF}' CONTCAR"
   dynamics=system(getdynamics)
