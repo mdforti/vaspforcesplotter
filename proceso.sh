@@ -37,16 +37,16 @@ gnuplot plot_energies.gpi
 pdftk fuerzas.pdf update_info bookmarks.txt output b_fuerzas.pdf
 pdftk Rel_Desplaza.pdf update_info bookmarks.txt output b_rel_desplaza.pdf
 
-pdftoppm -png Energias.pdf Energias
-
-PAGINAS="1 5 9 35 41 49"
-for p in $PAGINAS ; do pdftoppm -f $p -singlefile -png b_fuerzas.pdf fuerzas$p ; done
-
+#pdftoppm -png Energias.pdf Energias
+#
+#PAGINAS="1 5 9 35 41 49"
+#for p in $PAGINAS ; do pdftoppm -f $p -singlefile -png b_fuerzas.pdf fuerzas$p ; done
+#
 mkdir atomos
 mv force* atomos/
-cd atomos
-rm  !(*59|*67|*57|*65|*75|*69|*26|*126|*61)
-for file in force*
+#cd atomos
+#rm  !(*59|*67|*57|*65|*75|*69|*26|*126|*61)
+#for file in force*
 do
   mv $file $file"_"$thiscase
 done
