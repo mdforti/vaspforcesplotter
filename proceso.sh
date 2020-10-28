@@ -40,6 +40,8 @@ pdftk Rel_Desplaza.pdf update_info bookmarks.txt output b_rel_desplaza.pdf
 
 mkdir atomos
 mv force* atomos/
+cd atomos
+for file in force*
 do
   mv $file $file"_"$thiscase
 done
